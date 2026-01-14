@@ -1,11 +1,13 @@
 import express,{NextFunction,Request,Response} from 'express';
 import authRoutes from './routes/auth.routes.js';
-import { error } from 'node:console';
+
 
 
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use('/auth', authRoutes); 
 app.use(
   (err: any, req: Request, res: Response, next: NextFunction) => {
