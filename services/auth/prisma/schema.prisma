@@ -13,56 +13,19 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+model User{
+  id           String   @id @default(cuid())
+  name         String 
+  email        String   @unique
+  password     String
+  role         Role
 
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-model User {
-  id                         String      @id @default(cuid())
-  email                      String      @unique
-  password                   String
-  name                       String
-  phone_number               String?
-  role                       Role
-  bio                        String?
-  resume                     String?
-  resume_public_id           String?
-  profile_picture            String?
-  profile_picture_public_id  String?
-
-  isSubscribed                Boolean     @default(false)
-
-  skills                     UserSkill[]
-
-  createdAt                  DateTime    @default(now())
-  updatedAt                  DateTime    @updatedAt
-
+  @@index([email])
   @@index([role])
-  @@index([createdAt])
 }
-
-model Skill {
-  id        String      @id @default(cuid())
-  name      String      @unique
-
-  users     UserSkill[]
-
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-}
-
-model UserSkill {
-  id        String   @id @default(cuid())
-  userId    String
-  skillId   String
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, skillId])
-}
-
 enum Role {
   ADMIN
   RECRUITER

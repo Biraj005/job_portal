@@ -1,16 +1,13 @@
 import amqplib, { Channel, Connection } from "amqplib";
 
-
 let connection;
-let channel:Channel;
+let channel: Channel;
 
 export const EXCHANGE_NAME = "app_events";
-
 export enum ROUTING_KEYS {
   USER_CREATED = "USER_CREATED",
   SEND_EMAIL = "SEND_EMAIL",
 }
-
 
 export async function connectRabbitMQ() {
   connection = await amqplib.connect(
@@ -29,20 +26,4 @@ export async function connectRabbitMQ() {
 export function getChannel(): Channel {
   if (!channel) throw new Error("RabbitMQ channel not initialized");
   return channel;
-}
-
-export async function publishEvent(
-  routingKey: ROUTING_KEYS,
-  payload: any
-) {
-  const channel = getChannel();
-
-  channel.publish(
-    EXCHANGE_NAME,
-    routingKey,
-    Buffer.from(JSON.stringify(payload)),
-    { persistent: true }
-  );
-
-  console.log(`📤 Event published: ${routingKey}`);
 }

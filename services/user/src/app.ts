@@ -1,7 +1,5 @@
 import express,{NextFunction,Request,Response} from 'express';
-import authRoutes from './routes/auth.routes.js';
 import cookieParase from 'cookie-parser';
-
 
 const app = express();
 
@@ -9,7 +7,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParase());
 
-app.use('/auth', authRoutes); 
+// app.use('/auth'); 
 app.use(
   (err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);

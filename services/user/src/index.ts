@@ -1,18 +1,13 @@
 import app from "./app.js";
-import { redisclient } from "./utils/redis.js";
-import { connectRabbitMQ } from "./utils/queue-config.js";
+import { startUtilConsumer } from "./utils/queue-config.js";
+import { connectRabbitMQ } from "./utils/rabbit-mq.js";
 
 async function bootstrap() {
-  try {
-    await redisclient.connect();
-    console.log("✅ Redis connected");
-  } catch (err) {
-    console.error("❌ Failed to connect Redis:", err);
-    process.exit(1);
-  }
+ 
 
   try {
     await connectRabbitMQ();
+    await startUtilConsumer();
     console.log("✅ RabbitMQ connected");
   } catch (err) {
     console.error("❌ Failed to connect RabbitMQ:", err);

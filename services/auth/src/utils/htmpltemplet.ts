@@ -1,4 +1,4 @@
-export const getHtml = (name: string) => {
+export const getHtmlForRegistration = (name: string) => {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,6 +66,99 @@ export const getHtml = (name: string) => {
       </td>
     </tr>
   </table>
+</body>
+</html>
+`;
+};
+
+export const getHtmlFroReset = (link: string,name:string) => {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f7;
+      color: #51545e;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .header {
+      background-color: #4f46e5;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .body {
+      padding: 30px;
+      text-align: center;
+    }
+    .body h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #333333;
+    }
+    .body p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: #4f46e5;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .footer {
+      background-color: #f4f4f7;
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #888888;
+    }
+    @media only screen and (max-width: 600px) {
+      .body {
+        padding: 20px;
+      }
+      .header h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Password Reset Request</h1>
+    </div>
+    <div class="body">
+      <h2>Hello, ${name}</h2>
+      <p>We received a request to reset your password. Click the button below to reset it:</p>
+      <a href="${link}" class="button">Reset Password</a>
+      <p>If you did not request a password reset, please ignore this email.</p>
+      <p>Link expires in 1 hour.</p>
+    </div>
+    <div class="footer">
+      <p>&copy; ${new Date().toLocaleString("default", { year: "numeric" })} Your Company. All rights reserved.</p>
+    </div>
+  </div>
 </body>
 </html>
 `;

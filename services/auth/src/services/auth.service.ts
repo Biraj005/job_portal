@@ -1,4 +1,3 @@
-// services/auth.service.ts
 import { Request } from "express";
 import { IUser } from "../schemas/userSchema.js";
 import ApiError from "../utils/apiError.js";
@@ -7,8 +6,18 @@ import prisma from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 import getBufferDataUri from "../utils/buffer.js";
 import axios from "axios";
-import { sendDataToQueue } from "../utils/queue-config.js";
-import { getHtml } from "../utils/htmpltemplet.js";
+import { publishEvent, ROUTING_KEYS } from "../utils/queue-config.js";
+import {
+  getHtmlForRegistration,
+  getHtmlFroReset,
+} from "../utils/htmpltemplet.js";
+import jwt from "jsonwebtoken";
+import { redisclient } from "../utils/redis.js";
+
+enum HELPER {
+  USER_CREATED = "user_created",
+  SEND_MSG = "message_service",
+}
 
 export class AuthService {
   async registerUser(req: Request) {
@@ -37,17 +46,17 @@ export class AuthService {
       ...result.data,
       password: hashedPassword,
     };
+    console.log(newUser)
 
     let createdUser;
+    let resume_link = null;
     if (newUser.role == "RECRUITER") {
       createdUser = await prisma.user.create({
         data: {
-          name: newUser.name,
           email: newUser.email,
-          password: newUser.password,
+          name: newUser.name,
+          password: hashedPassword,
           role: newUser.role,
-          phone_number: newUser.phone_number ?? null,
-          bio: newUser.bio ?? null,
         },
       });
 
@@ -71,24 +80,34 @@ export class AuthService {
           buffer: fileBuffer.content,
         }
       );
+      resume_link = cloude.data;
 
       createdUser = await prisma.user.create({
         data: {
           name: newUser.name,
           email: newUser.email,
-          password: newUser.password,
+          password: hashedPassword,
           role: newUser.role,
-          resume: cloude.data.url,
-          resume_public_id: cloude.data.public_id,
-          phone_number: newUser.phone_number ?? null,
-          bio: newUser.bio ?? null,
         },
       });
     }
-    sendDataToQueue({
+    // const  {url,public_id} = resume_link as any;
+    const url = resume_link?.url;
+    const public_id = resume_link?.public_id;
+    const DataTosend = {
+      id: createdUser?.id,
+      name: createdUser?.name,
+      phoneNumber: newUser.phone_number,
+      role: newUser.role,
+      resume: url,
+      bio:newUser.bio,
+      resumePublicId: public_id,
+    };
+    publishEvent(ROUTING_KEYS.USER_CREATED, DataTosend);
+    publishEvent(ROUTING_KEYS.SEND_EMAIL, {
       to: createdUser!.email,
-      subject:"Welcome message",
-      html: getHtml(createdUser!.name),
+      subject: "Welcome message",
+      html: getHtmlForRegistration(newUser.name),
     });
     return createdUser;
   }
@@ -99,32 +118,7 @@ export class AuthService {
       where: {
         email,
       },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        phone_number: true,
-        role: true,
-        bio: true,
-        resume: true,
-        profile_picture: true,
-        isSubscribed: true,
-        createdAt: true,
-        updatedAt: true,
-        password: true,
-        skills: {
-          select: {
-            skill: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
     });
-
     if (!user) {
       throw new ApiError("Invalid credentials", 401);
     }
@@ -136,5 +130,80 @@ export class AuthService {
     }
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
+  }
+  async forgetPassword(data: { email: string }) {
+    const { email } = data;
+
+    if (!email) throw new ApiError("Invalid email", 400);
+
+    const finduser = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (!finduser) {
+      throw new ApiError("User not found", 400);
+    }
+    const resetToken = jwt.sign(
+      {
+        email: finduser.email,
+        type: "reset",
+      },
+      process.env.JWT_PASS_RESET as string,
+      {
+        expiresIn: "15m",
+      }
+    );
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+    await redisclient.set(`forgot:${finduser.email}`, resetToken, {
+      EX: 900,
+    });
+
+    const message = {
+      to: finduser.email,
+      subject: "RESET YOUR PASSWORD USING THE LINL",
+      html: getHtmlFroReset(resetLink, finduser.name),
+    };
+    
+    publishEvent(ROUTING_KEYS.SEND_EMAIL, message);
+
+    return { success: true, message: "Email send" };
+  }
+  async resetpassword(token: string, password: string) {
+    let decoded: any;
+
+    try {
+      decoded = jwt.verify(token, process.env.JWT_PASS_RESET as string);
+    } catch (error: any) {
+      console.log(error.message, "jooo");
+      throw new ApiError("Expired token", 400);
+    }
+
+    if (decoded.type !== "reset") {
+      throw new ApiError("Invalid token type", 400);
+    }
+    const email = decoded.email;
+    const storedToken = await redisclient.get(`forgot:${email}`);
+
+    if (!storedToken || storedToken !== token) {
+      throw new ApiError("Expired token", 400);
+    }
+
+    const hashedpassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        password: hashedpassword,
+      },
+    });
+
+    await redisclient.del(`forgot:${email}`);
+
+    return { success: true, message: "Password changed succesfully" };
   }
 }
