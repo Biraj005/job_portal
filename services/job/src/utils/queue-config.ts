@@ -1,36 +1,48 @@
-import { getChannel, connectRabbitMQ } from "./rabbit-mq.js";
-import { EXCHANGE_NAME } from "./rabbit-mq.js";
-import prisma from "../lib/prisma.js";
+import amqplib, { Channel, Connection } from "amqplib";
+
+
+let connection;
+let channel:Channel;
+
+export const EXCHANGE_NAME = "app_events";
+
 export enum ROUTING_KEYS {
   USER_CREATED = "USER_CREATED",
   SEND_EMAIL = "SEND_EMAIL",
 }
 
-export async function startUtilConsumer() {
-  await connectRabbitMQ();
-  const channel = getChannel();
 
-  const QUEUE = "util_service_queue";
+export async function connectRabbitMQ() {
+  connection = await amqplib.connect(
+    process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672"
+  );
 
-  await channel.assertQueue(QUEUE, { durable: true });
+  channel = await connection.createChannel();
 
-  await channel.bindQueue(QUEUE, EXCHANGE_NAME, ROUTING_KEYS.USER_CREATED);
-
-  channel.consume(QUEUE, async (msg) => {
-    if (!msg) return;
-
-    const data = JSON.parse(msg.content.toString());
-    console.log(data);
-    try {
-      await prisma.userProfile.create({
-        data,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-
-    channel.ack(msg);
+  await channel.assertExchange(EXCHANGE_NAME, "direct", {
+    durable: true,
   });
 
-  console.log(" Util service listening for USER_CREATED");
+  console.log("RabbitMQ connected");
+}
+
+export function getChannel(): Channel {
+  if (!channel) throw new Error("RabbitMQ channel not initialized");
+  return channel;
+}
+
+export async function publishEvent(
+  routingKey: ROUTING_KEYS,
+  payload: any
+) {
+  const channel = getChannel();
+
+  channel.publish(
+    EXCHANGE_NAME,
+    routingKey,
+    Buffer.from(JSON.stringify(payload)),
+    { persistent: true }
+  );
+
+  console.log(` Event published: ${routingKey}`);
 }

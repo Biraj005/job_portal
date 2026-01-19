@@ -15,7 +15,8 @@ router.get('/company/:id',isAuth,JobController.getCompany);
 router.get("/:id",JobController.getSingleJob);
 router.get("/", JobController.getJobs);
 router.post("/:id/apply",isAuth, JobController.applyJob);
-
+router.get('/:id/application',isAuth,JobController.getAllApplicationsforJob);
+router.patch('/:jobid/application/:applicantionid',isAuth,JobController.updateapplicationStatus);
 
 
 

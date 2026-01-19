@@ -3,6 +3,7 @@ import { JobAuthenticatedRequest, User } from "../middlewares/authentcate.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Role } from "../utils/Role.js";
 import { JobService } from "../services/job.service.js";
+import { application_status } from "../generated/prisma/enums.js";
 
 const jobservice = new JobService();
 
@@ -10,7 +11,7 @@ export class JobController {
   static createCompany = asyncHandler(
     async (req: JobAuthenticatedRequest, res: Response, next: NextFunction) => {
       const user = req.user;
-   
+
       if (!user?.role || user.role !== Role.RECRUITER) {
         return res.status(409).json({
           success: false,
@@ -212,9 +213,9 @@ export class JobController {
       const user = req.user;
       const job_id = Number(req.params.id);
       const { resume } = req.body;
-      console.log(job_id,resume,user)
+      console.log(job_id, resume, user);
 
-      if (!user || user.role!=='CANDIDATE') {
+      if (!user || user.role !== "CANDIDATE") {
         return res.status(401).json({
           success: false,
           message: "Unauthorized you must be an candidate",
@@ -240,13 +241,83 @@ export class JobController {
         Number(user.id),
         user.email!,
         resume,
-        user.subcribed
+        user.subcribed,
       );
 
       return res.status(201).json({
         success: true,
         message: "Applied successfully",
         application,
+      });
+    },
+  );
+  static getAllApplicationsforJob = asyncHandler(
+    async (req: JobAuthenticatedRequest, res: Response, next: NextFunction) => {
+      const user = req.user;
+      if (!req.params.id) {
+        return res.status(400).json({
+          sucess: false,
+          message: "Job id is required",
+        });
+      }
+      const job_id = Number(req.params.id);
+
+      if (!user?.role || user.role !== Role.RECRUITER) {
+        return res.status(409).json({
+          success: false,
+          message: "Forbidden: Only recruiter allowed",
+        });
+      }
+
+      const applications = await jobservice.getAllApplicationsforJob(
+        user.id,
+        job_id,
+      );
+
+      return res.status(200).json({
+        success: true,
+        applications,
+      });
+    },
+  );
+  static updateapplicationStatus = asyncHandler(
+    async (req: JobAuthenticatedRequest, res: Response, next: NextFunction) => {
+      const user = req.user;
+     
+      const job_id = Number(req.params.jobid);
+      const application_id = Number(req.params.applicantionid);
+   
+
+      if (!user?.role || user.role !== Role.RECRUITER) {
+        return res.status(409).json({
+          success: false,
+          message: "Forbidden: Only recruiter allowed",
+        });
+      }
+      if (!job_id || !application_id) {
+        return res.status(400).json({
+          success: false,
+          message: "App fields required",
+        });
+      }
+
+      const updateapplicationStatu = await jobservice.updateApplicationStatus(
+        user.id,
+        job_id,
+        application_id,
+        req.body.status as application_status,
+      );
+
+      if (!updateapplicationStatu) {
+        return res.status(400).json({
+          success: false,
+          message: "application has not updated",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "application has been updated",
       });
     },
   );

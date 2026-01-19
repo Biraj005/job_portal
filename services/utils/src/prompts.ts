@@ -1,0 +1,98 @@
+export const getPrompt = (skills: string | string[]) => {
+  const skillList = Array.isArray(skills) ? skills.join(", ") : skills;
+
+  return `
+        Based on the following skills: ${skillList}.
+
+        Act as a professional career advisor and generate a personalized career path suggestion.
+
+        IMPORTANT INSTRUCTIONS:
+        - Your entire response MUST be valid JSON.
+        - Do NOT include any text, explanation, or markdown outside of the JSON.
+        - Do NOT wrap the JSON in code blocks.
+
+        Return a JSON object with the EXACT following structure:
+
+        {
+        "summary": "A brief, encouraging summary of the user's skill set and their general job title.",
+        "jobOptions": [
+            {
+            "title": "The name of the job role.",
+            "responsibilities": "A description of what the user would do in this role.",
+            "why": "An explanation of why this role is a good fit for their skills."
+            }
+        ],
+        "skillsToLearn": [
+            {
+            "category": "A general category for skill improvement (e.g., 'Deepen Your Existing Stack Mastery', 'DevOps & Cloud').",
+            "skills": [
+                {
+                "title": "The name of the skill to learn.",
+                "why": "Why learning this skill is important.",
+                "how": "Specific examples of how to learn or apply this skill."
+                }
+            ]
+            }
+        ],
+        "learningApproach": {
+            "title": "How to Approach Learning",
+            "points": [
+            "A bullet point list of actionable advice for learning."
+            ]
+        }
+        }
+        `;
+};
+
+export const resumeprompt = `
+You are an expert ATS (Applicant Tracking System) analyzer. Analyze the following resume
+and provide:
+1. An ATS compatibility score (0-100)
+2. Detailed suggestions to improve the resume for better ATS performance
+Your entire response must be in valid JSON format. Do not include any text or markdown
+formatting outside of the JSON structure.
+The JSON object should have the following structure:
+
+{
+"atsScore": 85,
+"scoreBreakdown": {
+"formatting": {
+"score": 90,
+"feedback": "Brief feedback on formatting"
+},
+"keywords": {
+"score": 80,
+"feedback": "Brief feedback on keyword usage"
+},
+"structure": {
+"score": 85,
+"feedback": "Brief feedback on resume structure"
+},
+"readability": {
+"score": 88,
+"feedback": "Brief feedback on readability"
+}
+},
+"suggestions": [
+{
+"category": "Category name (e.g., 'Formatting', 'Content', 'Keywords',
+'Structure')",
+"issue": "Description of the issue found",
+"recommendation": "Specific actionable recommendation to fix it",
+"priority": "high/medium/low"
+}
+],
+"strengths": [
+"List of things the resume does well for ATS"
+],
+"summary": "A brief 2-3 sentence summary of the overall ATS performance"
+}
+Focus on:
+- File format and structure compatibility
+- Proper use of standard section headings
+- Keyword optimization
+- Formatting issues (tables, columns, graphics, special characters)
+- Contact information placement
+- Date formatting
+- Use of action verbs and quantifiable achievements
+- Section organization and flow`;

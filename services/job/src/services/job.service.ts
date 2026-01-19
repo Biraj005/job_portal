@@ -1,8 +1,11 @@
 import { job_location, job_type } from "../generated/prisma/enums.js";
+import { application_status } from "../generated/prisma/enums.js";
 import prisma from "../lib/prisma.js";
 import ApiError from "../utils/apiError.js";
 import getBufferDataUri from "../utils/buffer.js";
 import axios from "axios";
+import { jobStatuseUpdateTemplete } from "../utils/templetes.js";
+import { publishEvent, ROUTING_KEYS } from "../utils/queue-config.js";
 
 interface JobBody {
   name?: string;
@@ -63,7 +66,7 @@ export class JobService {
         website: Data.website!,
         logo: cloud.data.url,
         logo_public_id: cloud.data.public_id,
-        recurter_id: id, // from auth
+        recurter_id: id,
       },
     });
     return newCompany;
@@ -293,8 +296,14 @@ export class JobService {
 
     return job;
   }
-  async applyJob(job_id: number,applicant_id: number,applicant_email: string,resume: string,subcribed:boolean) {
-    console.log(job_id,applicant_id,subcribed,resume,)
+  async applyJob(
+    job_id: number,
+    applicant_id: number,
+    applicant_email: string,
+    resume: string,
+    subcribed: boolean,
+  ) {
+    console.log(job_id, applicant_id, subcribed, resume);
 
     const job = await prisma.jobs.findFirst({
       where: {
@@ -311,9 +320,8 @@ export class JobService {
         job_id_applicant_id: {
           job_id,
           applicant_id,
-          
         },
-        subsribed:subcribed,
+        subsribed: subcribed,
       },
     });
 
@@ -326,10 +334,80 @@ export class JobService {
         applicant_id,
         applicant_email,
         resume,
-        subsribed: subcribed ,
+        subsribed: subcribed,
       },
     });
 
     return application;
+  }
+  async getAllApplicationsforJob(id: number, jobid: number) {
+    const find_job = await prisma.jobs.findFirst({
+      where: {
+        job_id: jobid,
+      },
+    });
+
+    if (!find_job) {
+      throw new ApiError("Invalid job id", 404);
+    }
+    if (find_job.recuiter_id !== id) {
+      throw new ApiError("Forbiden ", 403);
+    }
+
+    return await prisma.applications.findMany({
+      where: {
+        job_id: jobid,
+      },
+      orderBy: [{ subsribed: "desc" }, { applied_at: "asc" }],
+    });
+  }
+
+  async updateApplicationStatus(
+    recruiter_id: number,
+    job_id: number,
+    applicantion_id: number,
+    status: application_status,
+  ) {
+    const job = await prisma.jobs.findFirst({
+      where: {
+        job_id,
+        recuiter_id: recruiter_id,
+      },
+    });
+
+    if (!job) {
+      throw new ApiError("Job not found or forbidden", 403);
+    }
+
+    const application = await prisma.applications.findUnique({
+      where: {
+        id: applicantion_id,
+        job_id: job_id,
+      },
+    });
+
+    if (!application) {
+      throw new ApiError("Application not found", 404);
+    }
+
+    const updatedApplication = await prisma.applications.update({
+      where: {
+        id: applicantion_id,
+        job_id: job_id,
+      },
+      data: {
+        status,
+      },
+    });
+
+    const message:any = {
+      to:updatedApplication.applicant_email,
+      subject:"Application update - Job portal",
+      html:jobStatuseUpdateTemplete(job.title,status)
+
+    }
+    publishEvent(ROUTING_KEYS.SEND_EMAIL,message);
+
+    return updatedApplication;
   }
 }
