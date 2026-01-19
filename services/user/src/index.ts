@@ -1,7 +1,10 @@
 import app from "./app.js";
+import dotenv from 'dotenv'
 import { startUtilConsumer } from "./utils/queue-config.js";
 import { connectRabbitMQ } from "./utils/rabbit-mq.js";
 
+
+dotenv.config();
 async function bootstrap() {
  
 

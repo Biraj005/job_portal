@@ -8,10 +8,11 @@ datasource db {
 }
 
 model UserProfile {
-  id                        String   @id
+  id                        Int   @id
   name                      String
   phoneNumber               String?
   role                      Role
+  email                     String
 
   bio                       String?
   resume                    String?
@@ -42,7 +43,8 @@ model Skill {
 
 model UserSkill {
   id        String   @id @default(cuid())
-  userId    String
+  userId    Int
+  
   skillId   String
 
   user      UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)

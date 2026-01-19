@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum job_type {
+  Fulltime
+  Parttime
+  Contract
+  Internship
+}
+
+enum job_location {
+  Onsite
+  Remote
+  Hybrid
+}
+
+enum application_status {
+  Hired
+  Submitted
+  Rejected
+}
+
+model Companies {
+  company_id     Int      @id @default(autoincrement())
+  name           String   @unique
+  description    String
+  website        String 
+  logo           String
+  logo_public_id String
+  recurter_id    Int
+  jobs           Jobs[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Jobs {
+  job_id        Int            @id @default(autoincrement())
+  title         String
+  description   String
+  salary        Decimal        @db.Decimal(10, 2)
+  location      String
+  jobType       job_type
+  openings      Int
+  role          String
+  work_location job_location
+  company_id    Int
+  companis      Companies      @relation(fields: [company_id], references: [company_id], onDelete: Cascade)
+  application   applications[]
+
+  recuiter_id Int
+  createdAt   DateTime @default(now())
+  updateAt    DateTime @updatedAt
+  is_active   Boolean  @default(true)
+}
+
+model applications {
+  id              Int                @id @default(autoincrement())
+  job_id          Int
+  job             Jobs               @relation(fields: [job_id], references: [job_id], onDelete: Cascade)
+  applicant_id    Int
+  applicant_email String
+  status          application_status @default(Submitted)
+  resume          String
+  applied_at      DateTime           @default(now())
+  subsribed       Boolean
+
+  @@unique([job_id, applicant_id])
+}

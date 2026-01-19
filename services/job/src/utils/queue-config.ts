@@ -20,6 +20,7 @@ export async function startUtilConsumer() {
     if (!msg) return;
 
     const data = JSON.parse(msg.content.toString());
+    console.log(data);
     try {
       await prisma.userProfile.create({
         data,

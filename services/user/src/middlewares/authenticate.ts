@@ -1,36 +1,22 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-
-export enum Role {
-  USER = "USER",
-  ADMIN = "ADMIN",
-  RECRUITER = "RECRUITER",
-}
-
+import prisma from "../lib/prisma.js";
+import { Role } from "../generated/prisma/enums.js";
+import { Skill } from "../generated/prisma/client.js";
 
 export interface User {
-  id: string;
+  name:string,
+  id: number;
   email: string;
-  password: string;
-  name: string;
-
-  phone_number?: string | null;
+  phoneNumber: string | null;
   role: Role;
-
-  bio?: string | null;
-
+  bio: string | null;
   resume?: string | null;
-  resume_public_id?: string | null;
-
-  profile_picture?: string | null;
-  profile_picture_public_id?: string | null;
-
+  resumePublicId?: string | null;
+  profilePicture: string | null;
+  profilePicturePublicId:string|null,
   isSubscribed: boolean;
-
-  skills: UserSkill[];
-
-  createdAt: Date;
-  updatedAt: Date;
+  skills: Skill[];
 }
 export interface UserSkill {
   id: string;
@@ -38,12 +24,15 @@ export interface UserSkill {
   skill: string;
 }
 
-
-export interface AuthenticatedRequest extends Request{
-  user?:User
+export interface AuthenticatedRequest extends Request {
+  user?: User;
 }
 
-export const isAuth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const isAuth = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const token = req.cookies?.token;
 
@@ -65,12 +54,51 @@ export const isAuth = (req: AuthenticatedRequest, res: Response, next: NextFunct
         message: "Unauthorized: token missing",
       });
     }
-    
-    /// get User
+    const userFromDb = await prisma.userProfile.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        name:true,
+        email: true,
+        profilePicture: true,
+        profilePicturePublicId:true,
+        resume: true,
+        role: true,
+        bio: true,
+        phoneNumber: true,
+        resumePublicId: true,
+        isSubscribed: true,
+        skills: {
+          select: {
+            skill: true, 
+          },
+        },
+      },
+    });
+    if (!userFromDb) {
+      return res.status(401).json({
+        success: false,
+        message: "User associated with this token no longer exists",
+      });
+    }
 
-    
+    const user: User = {
+      id: userFromDb.id,
+      email: userFromDb.email,
+      phoneNumber: userFromDb.phoneNumber,
+      name:userFromDb.name,
+      role: userFromDb.role,
+      bio: userFromDb.bio,
+      resume: userFromDb.resume,
+      resumePublicId: userFromDb.resumePublicId,
+      profilePicture: userFromDb.profilePicture,
+      isSubscribed: userFromDb.isSubscribed,
+      profilePicturePublicId:userFromDb.profilePicturePublicId,
+      skills: userFromDb.skills.map((us) => us.skill),
+    };
 
-
+    req.user = user;
+    next();
   } catch (error) {
     return res.status(401).json({
       success: false,

@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { AuthService } from "../services/auth.service.js";
 import jwt from "jsonwebtoken";
-import { email, success } from "zod";
 
 const authService = new AuthService();
 
@@ -38,6 +37,8 @@ export class AuthController {
       {
         id: user?.id,
         email: user.email,
+        role:user.role,
+        subcribed:false,
       },
       process.env.JWT_SECRET as string,
       { expiresIn: "7d" }
@@ -55,7 +56,6 @@ export class AuthController {
     });
   });
   static forgetpassword = asyncHandler(async (req: Request, res: Response) => {
-    //
     const result = await authService.forgetPassword(req.body);
 
     if (!result.success)

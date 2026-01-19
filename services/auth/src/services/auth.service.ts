@@ -91,10 +91,10 @@ export class AuthService {
         },
       });
     }
-    // const  {url,public_id} = resume_link as any;
     const url = resume_link?.url;
     const public_id = resume_link?.public_id;
     const DataTosend = {
+      email:newUser.email,
       id: createdUser?.id,
       name: createdUser?.name,
       phoneNumber: newUser.phone_number,
