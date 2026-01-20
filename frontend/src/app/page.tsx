@@ -1,9 +1,13 @@
+import CareerGuide from "@/components/CareerGuide";
 import Hero from "@/components/Hero";
-import { Button } from "@/components/ui/button";
+import ResumeAnalyzer from "@/components/ResumeAnalyzer";
+
 function Home() {
   return (
     <div>
       <Hero />
+      <CareerGuide/>
+      <ResumeAnalyzer/>
     </div>
   );
 }

@@ -25,8 +25,10 @@ router.post("/upload", async (req, res) => {
 });
 
 router.post("/career", async (req, res) => {
+
   try {
     const { skills } = req.body;
+   
     if (!skills) {
       return res.status(400).json({
         success: false,
@@ -67,10 +69,9 @@ router.post("/career", async (req, res) => {
   }
 });
 
-router.post("/resume", async (req, res) => {
+router.post("/resume-analyser", async (req, res) => {
   try {
     const { pdfBase64 } = req.body;
-
     if (!pdfBase64) {
       return res.status(400).json({
         success: false,
@@ -101,12 +102,15 @@ router.post("/resume", async (req, res) => {
     });
     let jsonResponse;
     try {
-      const rawText: string = response.text || "";
+      console.log(response.text)
+      const rawText: string = response.text??"";
+      console.log(rawText,"rawt text")
 
       const cleanedText = rawText
         .replace(/```(?:json)?/gi, "")
         .replace(/```/g, "")
         .trim();
+      console.log(cleanedText)
       if (!cleanedText) {
         throw new Error("Ai did not return response");
       }

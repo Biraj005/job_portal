@@ -1,12 +1,115 @@
+import { ArrowRight, Briefcase, Search, TrendingDown } from "lucide-react";
+import Link from "next/link";
+import { Button } from "./ui/button";
+import Image from "next/image";
+
 function Hero() {
   return (
-   <section className="relative overflow-hidden bg-secondary">
-    <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-10 w-72 h-72  bg-blue-500 rounded-full"></div>
-    </div>
+    <section className="relative overflow-hidden bg-secondary">
+      <div className="absolute inset-0 opacity-5">
+        <div
+          className="absolute top-20 left-10 w-72 h-72  bg-blue-500 rounded-full
+        blur-3xl"
+        ></div>
+        <div
+          className="absolute bottom-20 right-10 w-96  h-96  bg-blue-500 rounded-full
+        blur-3xl"
+        ></div>
+      </div>
+      <div className="container mx-auto px-5 py-16 md:py-24 relative">
+        <div className="flex flex-col-reverse md:flex-row items-center gap-12 md:gap-16">
+          <div
+            className="flex-1 flex flex-col items-center md:items-start  text-center md:text-left
+          space-y-6"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-background/50 backdrop-blur-sm ">
+              <TrendingDown size={16} className="text-blue-600" />
+              <span className="text-sm font-medium">
+                #1 Job platform in India
+              </span>
+            </div>
+            {/**mian heading */}
 
-   </section>
-  )
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight ">
+              Find your dream job at{" "}
+              <span className="inline-block text-red-500">Hire</span>{" "}
+              <span>Heaven</span>
+            </h1>
+            {/**description */}
+            <p className="text-lg md:text-xl leading-relaxed opacity-80 max-w-2xl">
+              Connect with top employers hiring across industries. Discover
+              verified companies, explore open roles, and apply with confidence
+              — all from one powerful platform designed to accelerate your
+              career.
+            </p>
+            {/* stats*/}
+            <div className="flex flex-wrap justify-center md:justify-start gap-8 py-4">
+              <div className="text-center md:text-left">
+                <p className="text-3xl font-bold text-blue-600">10k+</p>
+                <p className="text-sm opacity-70">Active jobs</p>
+              </div>
+              <div className="text-center md:text-left">
+                <p className="text-3xl font-bold text-blue-600">5k+</p>
+                <p className="text-sm opacity-70">Companies</p>
+              </div>
+              <div className="text-center md:text-left">
+                <p className="text-3xl font-bold text-blue-600">10k+</p>
+                <p className="text-sm opacity-70">Job Seakers</p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <Link href={"/jobs"}>
+                <Button
+                  size={"lg"}
+                  className="text-base px-8 h-12 gap-2 group transition-all"
+                >
+                  <Search size={18} />
+                  Browse jobs
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </Button>
+              </Link>
+              <Link href={"/about"}>
+                <Button
+                  variant={"outline"}
+                  size={"lg"}
+                  className="text-base px-8 h-12 gap-2"
+                >
+                  <Briefcase />
+                  Learn more
+                </Button>
+              </Link>
+            </div>
+
+            {/**trust indicator */}
+            <div className="flex items-center gap-2  text-sm opacity-60 pt-4">
+              <span>✅ Free to use</span>
+              <span>•</span>
+              <span>✅ Verified employers</span>
+              <span>•</span>
+              <span>✅ Secure platform</span>
+            </div>
+          </div>
+
+          {/**image section*/}
+          <div className="flex-1 relative">
+            <div className="relative group">
+              <div className="absolute -indent-4 bg-blue-400 opacity-20 blur-xl group-hover:opacity-30 transition-opacity">
+
+              </div>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                {/* <img src="/hero.png" alt="" className="object-cover  object-center w-full h-full
+                transform transition-transform duration-500 group-hover:scale-105" /> */}
+                <Image src={'/hero.png'} height={300} width={600} alt="Hero image" quality={360}/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
-export default Hero
+export default Hero;

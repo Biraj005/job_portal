@@ -24,7 +24,7 @@ function Navbar() {
       <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-1">
+            <Link href="/" className="flex items-center gap-1 ml-5">
               <span className="text-2xl font-black tracking-tight flex gap-1">
                 <span className="bg-linear-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                   Hired
