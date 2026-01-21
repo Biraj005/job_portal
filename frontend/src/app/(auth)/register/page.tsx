@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import Link from "next/link";
+import toast from "react-hot-toast"
 import {
   ArrowRight,
   Eye,
@@ -18,8 +19,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Errors, SignupFormValues, signupSchema } from "@/types/User";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const Routeer = useRouter()
   const [isLoading, setIsLoading] = useState(false);
   const [currentRole, setCurrentRole] = useState<"RECRUITER" | "CANDIDATE">(
     "CANDIDATE",
@@ -88,6 +91,9 @@ export default function RegisterPage() {
   };
 
   const submit = async (e: React.FormEvent) => {
+    const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL;
+    console.log(AUTH_URL);
+
     e.preventDefault();
     setErrors({});
     setIsLoading(true);
@@ -114,19 +120,45 @@ export default function RegisterPage() {
       setIsLoading(false);
       return;
     }
-    console.log(validated.data)
 
     try {
-      const {data} = await axios.post(``)
-      
-    } catch (error) {
-      
+      const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL;
+
+      const payload = new FormData();
+
+      payload.append("name", validated.data.name);
+      payload.append("email", validated.data.email);
+      payload.append("password", validated.data.password);
+      payload.append("role", validated.data.role);
+      payload.append("bio", validated.data.bio || "");
+      payload.append("phone_number", validated.data.phone_number || "");
+
+      if (validated.data.resume) {
+        payload.append("file", validated.data.resume);
+      }
+      console.log(payload);
+
+      const { data } = await axios.post(`${AUTH_URL}/auth/register`, payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(data);
+
+      if(data.success){
+        toast.success(data.message);
+        Routeer.push("/login"); 
+      }
+    } catch (error: any) {
+       console.log(error);
+       toast.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-secondary overflow-hidden py-10 px-4">
-      {/* Background decorations */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
@@ -139,18 +171,16 @@ export default function RegisterPage() {
             className="inline-flex items-center justify-center gap-1 mb-2"
           >
             <span className="text-3xl font-black tracking-tight flex gap-1">
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Hired
+              <span className="bg-linear-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                Career
               </span>
-              <span className="text-red-500">Heaven</span>
+              <span className="text-blue-900">Grind</span>
             </span>
           </Link>
           <h1 className="text-2xl font-bold tracking-tight">
             Create an account
           </h1>
-          <p className="text-sm text-muted-foreground opacity-70">
-            Join the #1 job platform in India
-          </p>
+         
         </div>
 
         <form className="space-y-6" onSubmit={submit}>

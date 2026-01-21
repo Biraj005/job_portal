@@ -5,7 +5,7 @@ import { Role } from "../generated/prisma/enums.js";
 import { Skill } from "../generated/prisma/client.js";
 
 export interface User {
-  name:string,
+  name: string;
   id: number;
   email: string;
   phoneNumber: string | null;
@@ -14,7 +14,7 @@ export interface User {
   resume?: string | null;
   resumePublicId?: string | null;
   profilePicture: string | null;
-  profilePicturePublicId:string|null,
+  profilePicturePublicId: string | null;
   isSubscribed: boolean;
   skills: Skill[];
 }
@@ -31,10 +31,14 @@ export interface AuthenticatedRequest extends Request {
 export const isAuth = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
-    const token = req.cookies?.token;
+    const authHeader = req.headers.authorization;
+    const token =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? authHeader.split(" ")[1]
+        : null;
 
     if (!token) {
       return res.status(401).json({
@@ -45,7 +49,7 @@ export const isAuth = async (
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET as string
+      process.env.JWT_SECRET as string,
     ) as JwtPayload;
 
     if (!decoded || !decoded.id) {
@@ -58,10 +62,10 @@ export const isAuth = async (
       where: { id: decoded.id },
       select: {
         id: true,
-        name:true,
+        name: true,
         email: true,
         profilePicture: true,
-        profilePicturePublicId:true,
+        profilePicturePublicId: true,
         resume: true,
         role: true,
         bio: true,
@@ -70,7 +74,7 @@ export const isAuth = async (
         isSubscribed: true,
         skills: {
           select: {
-            skill: true, 
+            skill: true,
           },
         },
       },
@@ -86,14 +90,14 @@ export const isAuth = async (
       id: userFromDb.id,
       email: userFromDb.email,
       phoneNumber: userFromDb.phoneNumber,
-      name:userFromDb.name,
+      name: userFromDb.name,
       role: userFromDb.role,
       bio: userFromDb.bio,
       resume: userFromDb.resume,
       resumePublicId: userFromDb.resumePublicId,
       profilePicture: userFromDb.profilePicture,
       isSubscribed: userFromDb.isSubscribed,
-      profilePicturePublicId:userFromDb.profilePicturePublicId,
+      profilePicturePublicId: userFromDb.profilePicturePublicId,
       skills: userFromDb.skills.map((us) => us.skill),
     };
 

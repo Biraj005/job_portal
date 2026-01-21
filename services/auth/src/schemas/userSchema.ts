@@ -8,7 +8,6 @@ export const IUser = z.object({
     phone_number: z.string().optional(),
     role: z.enum(['ADMIN', 'RECRUITER', 'CANDIDATE'], 'Must be user or admin').default('CANDIDATE'),
     bio: z.string().optional(),
-    resume: z.string().optional()
 })
 
 

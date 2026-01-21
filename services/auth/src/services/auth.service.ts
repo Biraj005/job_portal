@@ -51,6 +51,7 @@ export class AuthService {
     let createdUser;
     let resume_link = null;
     if (newUser.role == "RECRUITER") {
+      "RECRUITER"
       createdUser = await prisma.user.create({
         data: {
           email: newUser.email,
@@ -63,6 +64,7 @@ export class AuthService {
       console.log("Created candidate user:", createdUser);
     } else if (newUser.role == "CANDIDATE") {
       const file = req.file;
+    
 
       if (!file) {
         throw new ApiError("Profile picture is required for candidates", 400);

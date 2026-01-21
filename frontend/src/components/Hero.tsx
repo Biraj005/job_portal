@@ -32,7 +32,7 @@ function Hero() {
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight ">
               Find your dream job at{" "}
-              <span className="inline-block text-red-500">Hire</span>{" "}
+              <span className="inline-block text-blue-900">Hire</span>{" "}
               <span>Heaven</span>
             </h1>
             {/**description */}
@@ -102,7 +102,7 @@ function Hero() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 {/* <img src="/hero.png" alt="" className="object-cover  object-center w-full h-full
                 transform transition-transform duration-500 group-hover:scale-105" /> */}
-                <Image src={'/hero.png'} height={300} width={600} alt="Hero image" quality={360}/>
+                <Image src={'/hero.png'} height={300} width={600} alt="Hero image" quality={70}/>
               </div>
             </div>
           </div>

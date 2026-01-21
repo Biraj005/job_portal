@@ -2,8 +2,21 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, Github } from "lucide-react";
-import { Button } from "@/components/ui/button"; 
+import {
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  Mail,
+  Github,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { AppData } from "@/context/AppContext";
+import Cookies from "js-cookie";
 
 interface FormData {
   email: string;
@@ -11,6 +24,8 @@ interface FormData {
 }
 
 export default function LoginPage() {
+  const { isAuth, setIsAuth, setUser } = AppData();
+  const Router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
@@ -24,14 +39,43 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL;
+
+    for (const key of Object.keys(formData)) {
+      if (formData[key as keyof FormData].length === 0) {
+        toast.error("Please fill all the field");
+        return;
+      }
+    }
     setIsLoading(true);
+    try {
+      const { data } = await axios.post(`${AUTH_URL}/auth/login`, formData, {
+        withCredentials: true,
+      });
+      console.log(data);
+      toast.success(data.message);
+      console.log(data);
+      setUser(data.user);
+      setIsAuth(true);
 
-    setTimeout(() => {
+      Cookies.set("token", data.token, {
+        expires: 7,
+        secure: true,
+        sameSite: "lax",
+      });
+      Router.push("/");
+    } catch (error: any) {
+      console.log(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+      }
+    } finally {
       setIsLoading(false);
-      console.log("Logged in with:", formData);
-    }, 2000);
+    }
   };
-
+  if (isAuth) {
+    return Router.push("/");
+  }
   return (
     <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center bg-secondary overflow-hidden py-10 px-4">
       <div className="absolute inset-0 opacity-5 pointer-events-none">
@@ -40,12 +84,15 @@ export default function LoginPage() {
       </div>
       <div className="relative w-full max-w-md bg-background/80 backdrop-blur-lg border rounded-2xl shadow-xl overflow-hidden p-8">
         <div className="text-center space-y-2 mb-8">
-          <Link href="/" className="inline-flex items-center justify-center gap-1 mb-2">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-1 mb-2"
+          >
             <span className="text-3xl font-black tracking-tight flex gap-1">
               <span className="bg-linear-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Hired
+                Career
               </span>
-              <span className="text-red-500">Heaven</span>
+              <span className="text-blue-900">Grind</span>
             </span>
           </Link>
           <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
@@ -54,7 +101,6 @@ export default function LoginPage() {
           </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          
           <div className="space-y-2">
             <label
               htmlFor="email"
@@ -71,7 +117,6 @@ export default function LoginPage() {
                 name="email"
                 type="email"
                 placeholder="name@example.com"
-                required
                 value={formData.email}
                 onChange={handleInputChange}
                 className="flex h-10 w-full rounded-md border bg-background px-3 pl-9 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
@@ -104,7 +149,6 @@ export default function LoginPage() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                required
                 value={formData.password}
                 onChange={handleInputChange}
                 className="flex h-10 w-full rounded-md border bg-background px-3 pl-9 pr-10 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition-all"
@@ -143,11 +187,13 @@ export default function LoginPage() {
           </Button>
         </form>
 
-    
         <div className="mt-8 text-center text-sm">
           <p className="text-muted-foreground opacity-70">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-semibold text-blue-600 hover:underline">
+            <Link
+              href="/register"
+              className="font-semibold text-blue-600 hover:underline"
+            >
               Sign up
             </Link>
           </p>

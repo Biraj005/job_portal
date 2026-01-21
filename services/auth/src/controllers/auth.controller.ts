@@ -7,6 +7,7 @@ const authService = new AuthService();
 
 export class AuthController {
   static registerUser = asyncHandler(async (req: Request, res: Response) => {
+    console.log(req.body);
     const user = await authService.registerUser(req);
 
     const token = jwt.sign(
@@ -14,14 +15,8 @@ export class AuthController {
         id: user?.id,
       },
       process.env.JWT_SECRET as string,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
@@ -37,17 +32,13 @@ export class AuthController {
       {
         id: user?.id,
         email: user.email,
-        role:user.role,
-        subcribed:false,
+        role: user.role,
+        subcribed: false,
       },
       process.env.JWT_SECRET as string,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+
     return res.status(201).json({
       success: true,
       token: token,
@@ -85,6 +76,7 @@ export class AuthController {
         success: true,
         message: "Password has been updated",
       });
-    }
+    },
   );
+  
 }
