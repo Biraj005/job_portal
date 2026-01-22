@@ -107,7 +107,7 @@ function Navbar() {
                         <p className="text-sm font-semibold">{user?.name}</p>
                         <p className="text-xs opacity-60 truncate ">{user?.email}</p>
                       </div>
-                      <Link href={"/"}>
+                      <Link href={"/account"}>
                         <Button
                           className="w-full justify-start gap-2 "
                           variant={"ghost"}

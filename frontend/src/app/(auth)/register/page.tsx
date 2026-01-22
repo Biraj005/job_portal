@@ -343,7 +343,7 @@ export default function RegisterPage() {
   );
 }
 
-function Input({ icon, error, rightIcon, className, ...props }: any) {
+export function Input({ icon, error, rightIcon, className, ...props }: any) {
   return (
     <div className="space-y-2">
       <div className="relative">

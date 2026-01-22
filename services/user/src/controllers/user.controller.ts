@@ -46,7 +46,7 @@ export class UserController {
         });
       }
       return res.status(200).json({
-        succcess: true,
+        success: true,
         message: "User has been updated",
         user: updateUser,
       });
@@ -78,19 +78,20 @@ export class UserController {
       return res.status(200).json({
         success: true,
         message: "User profilepic has beeen updated",
-        user: updateuser,
+        user: updateuser[0],
       });
     }
   );
   static updateResume = asyncHandler(
     async (req: AuthenticatedRequest, res: Response, nex: NextFunction) => {
       const user = req.user;
-
+      
       if (!user) {
         throw new ApiError("Authentication required", 401);
       }
 
       const file = req.file;
+   
 
       if (!file) {
         throw new ApiError("No resume file provided", 400);
@@ -151,7 +152,7 @@ export class UserController {
       return res.status(200).json({
         success:true,
         message:"Skill is deleted",
-        skill:deletedskill,
+        skills:deletedskill,
       })
 
 

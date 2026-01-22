@@ -131,6 +131,8 @@ export class UserService {
     return updatedSkills.map((us) => us.skill);
   }
   async deleteSkill(user: User, skillId: string) {
+
+
     if (!skillId || !skillId.trim()) {
       throw new ApiError("Skill id is required", 400);
     }

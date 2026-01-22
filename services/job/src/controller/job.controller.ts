@@ -11,7 +11,6 @@ export class JobController {
   static createCompany = asyncHandler(
     async (req: JobAuthenticatedRequest, res: Response, next: NextFunction) => {
       const user = req.user;
-
       if (!user?.role || user.role !== Role.RECRUITER) {
         return res.status(409).json({
           success: false,
@@ -136,7 +135,7 @@ export class JobController {
       const getAllCompanies = await jobservice.getAllCompanies(user.id);
 
       return res.status(200).json({
-        sucess: true,
+        success: true,
         companies: getAllCompanies,
       });
     },

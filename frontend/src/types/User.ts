@@ -20,3 +20,4 @@ export interface Errors{
 }
 
 export type SignupFormValues = z.infer<typeof signupSchema>;
+

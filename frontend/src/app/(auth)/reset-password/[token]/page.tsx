@@ -13,12 +13,13 @@ import {
   AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
   
   const {token} = useParams();
-  console.log(token);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -62,16 +63,18 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      console.log("Submitting:", { token, password: formData.password });
-  
-      setTimeout(() => {
+      const {data} = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/auth/reset-password/${token}`,{
+        password:formData.password
+      })
+      if(data.success){
+        toast.success(data.message);
         setIsSuccess(true);
-        setIsLoading(false);
-        setTimeout(() => router.push("/login"), 3000);
-      }, 1500);
-
+        router.push('/login');
+      }
     } catch (err) {
       setError("Something went wrong. Please try again.");
+      
+    }finally{
       setIsLoading(false);
     }
   };

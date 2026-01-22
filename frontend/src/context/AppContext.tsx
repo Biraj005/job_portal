@@ -19,14 +19,6 @@ export interface Skill {
   updatedAt: string;
 }
 
-export interface UserSkill {
-  id: string;
-  userId: number;
-  skillId: string;
-  skill: Skill;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export interface UserProfile {
   id: number;
@@ -44,7 +36,7 @@ export interface UserProfile {
 
   isSubscribed: boolean;
 
-  skills: UserSkill[];
+  skills: Skill[];
 }
 
 interface AuthContextType {
