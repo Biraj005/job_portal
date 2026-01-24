@@ -12,12 +12,31 @@ interface IUpdate {
 }
 
 export class UserService {
-  async getUserProfile(id:number) {
-    const user = await prisma.userProfile.findFirst({
-      where: {
-        id,
+  async getUserProfile(id: number) {
+    const user = await prisma.userProfile.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        bio: true,
+        profilePicture: true,
+        resume: true,
+        isSubscribed: true,
+        role:true,
+        skills: {
+          select: {
+            skill: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
+   
 
     return user;
   }
@@ -53,7 +72,7 @@ export class UserService {
       process.env.UTIL_SERVICE_URL + "/api/utils/upload",
       {
         buffer: buffer.content,
-      }
+      },
     );
 
     const updatedUser = await prisma.userProfile.updateManyAndReturn({
@@ -80,7 +99,7 @@ export class UserService {
       process.env.UTIL_SERVICE_URL + "/api/utils/upload",
       {
         buffer: buffer.content,
-      }
+      },
     );
 
     const updatedUser = await prisma.userProfile.updateManyAndReturn({
@@ -131,8 +150,6 @@ export class UserService {
     return updatedSkills.map((us) => us.skill);
   }
   async deleteSkill(user: User, skillId: string) {
-
-
     if (!skillId || !skillId.trim()) {
       throw new ApiError("Skill id is required", 400);
     }

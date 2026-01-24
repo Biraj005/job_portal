@@ -145,8 +145,9 @@ export class JobController {
     async (req: JobAuthenticatedRequest, res: Response, next: NextFunction) => {
       const user = req.user;
       const company_id = Number(req.params.id);
+      console.log(company_id)
 
-      if (!user?.role || user.role !== Role.RECRUITER) {
+      if (!user?.role || (user.role!==Role.CANDIDATE && user.role!==Role.RECRUITER)) {
         return res.status(409).json({
           success: false,
           message: "Forbidden: Only recruiter allowed",

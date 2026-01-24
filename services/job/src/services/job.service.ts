@@ -104,6 +104,7 @@ export class JobService {
       work_location,
       company_id,
     } = data;
+    console.log(data);
 
     if (
       !title ||
@@ -222,7 +223,7 @@ export class JobService {
     const company = await prisma.companies.findFirst({
       where: {
         company_id,
-        recurter_id: recruiter_id,
+
       },
       include: {
         jobs: {

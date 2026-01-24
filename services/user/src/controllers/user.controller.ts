@@ -3,8 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { AuthenticatedRequest } from "../middlewares/authenticate.js";
 import { UserService } from "../services/user.service.js";
 import ApiError from "../utils/apiError.js";
-import getBufferDataUri from "../utils/buffer.js";
-import ErrorHandler from "../utils/erroHanler.js";
+
 
 const userService = new UserService();
 
@@ -18,6 +17,7 @@ export class UserController {
   );
   static getProfile = asyncHandler(
     async (req: Request, res: Response, nex: NextFunction) => {
+      console.log(req.params.id)
       const getUser = await userService.getUserProfile(Number(req.params.id as string));
       if (!getUser) {
         throw new ApiError("User Not found", 404);
