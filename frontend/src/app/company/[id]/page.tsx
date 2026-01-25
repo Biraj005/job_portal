@@ -202,7 +202,7 @@ const CompanyDetails = () => {
         );
       } else {
         console.log(payload,editingJobId)
-        return;
+        
         response = await axios.post(
             `${process.env.NEXT_PUBLIC_JOB_URL}/job/new`, 
             payload,
@@ -214,17 +214,14 @@ const CompanyDetails = () => {
 
       if (data.success || data.newJob || data.job || data.updatedJob) {
         toast.success(editingJobId ? "Job updated successfully!" : "Job posted successfully!");
-        
-        // Handle the returned job data
         const returnedJob = data.newJob || data.job || data.updatedJob;
         
         if (editingJobId) {
-            // Update the job in the list
             setJobs(prev => prev.map(j => 
               j.job_id === editingJobId ? { ...j, ...returnedJob } : j
             ));
         } else {
-            // Add new job to the beginning of the list
+    
             setJobs(prev => [returnedJob, ...prev]);
         }
         
@@ -601,6 +598,9 @@ const CompanyDetails = () => {
                   <div className="space-y-4">
                     {jobs.map((job) => (
                       <div
+                      onClick={()=>{
+                        router.push(`/jobs/${job.job_id}`)
+                      }}
                         key={job.job_id}
                         className="group flex items-center justify-between p-4 border rounded-xl hover:border-blue-200 hover:bg-blue-50/30 transition-all cursor-pointer"
                       >

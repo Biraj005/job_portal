@@ -290,7 +290,7 @@ const RecruiterCompanies = () => {
           </p>
         </div>
       ) : (
-        <div className="space-y-4 mt-6">
+        <div className="space-y-4 mt-6" >
           {companies.map((company) => (
             <div
               key={company.company_id}
@@ -315,7 +315,7 @@ const RecruiterCompanies = () => {
 
                 {/* Info */}
                 <div className="min-w-0">
-                  <p className="font-medium truncate">{company.name}</p>
+                  <p  className="font-medium truncate">{company.name}</p>
                   <p className="text-sm text-muted-foreground line-clamp-1">
                     {company.description || "No description provided"}
                   </p>

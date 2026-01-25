@@ -276,7 +276,6 @@ export class JobService {
     const job = await prisma.jobs.findFirst({
       where: {
         job_id,
-        is_active: true,
       },
       include: {
         companis: {

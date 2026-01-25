@@ -39,16 +39,11 @@ export default function ForgotPasswordPage() {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    if (isAuth) {
-      router.push("/");
-    }
-  }, [isAuth]);
 
   return isLoading ? (
     <SpinnerButton />
   ) : (
-    !isAuth && (
+   (
       <>
         <div className="min-h-screen flex items-center justify-center bg-secondary">
           <form

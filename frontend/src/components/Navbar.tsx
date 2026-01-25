@@ -188,13 +188,15 @@ function Navbar() {
 
           {isAuth ? (
             <>
-              <Button
+               <Link href={'/account'}>
+               <Button
                 variant={"ghost"}
                 className="w-full justify-start gap-3 h-11"
               >
                 <UserIcon size={18} />
                 My Profile
               </Button>
+               </Link>
               <Button
                 variant={"destructive"}
                 className="w-full justify-start gap-3 h-11"

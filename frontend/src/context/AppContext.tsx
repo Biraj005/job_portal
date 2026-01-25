@@ -7,7 +7,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import axios from "axios";
+import axios, { Axios, AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import Cookies from "js-cookie";
 export type Role = "ADMIN" | "RECRUITER" | "CANDIDATE";
@@ -18,7 +18,6 @@ export interface Skill {
   createdAt: string;
   updatedAt: string;
 }
-
 
 export interface UserProfile {
   id: number;
@@ -44,10 +43,12 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuth: boolean;
+  applyBtn: number | null;
   logout: () => Promise<void>;
   setUser: (user: UserProfile | null) => void;
   fetchUser: () => Promise<void>;
   setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
+  applyJob: (id: number) => Promise<void>;
 }
 export const USER_SERVICE = process.env.NEXT_PUBLIC_USER_URL;
 export const AUTH_SERVICE = process.env.NEXT_PUBLIC_AUTH_URL;
@@ -59,6 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
+  const [applyBtn, setApplyBtn] = useState<number | null>(null);
   const fetchUser = async () => {
     setIsLoading(true);
     try {
@@ -71,6 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         },
       });
       setUser(data.user);
+      console.log(data.user);
       setIsAuth(true);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -79,6 +82,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+  const applyJob = async (id: number) => {
+    setApplyBtn(id);
+    const token = Cookies.get('token');
+    try {
+          const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_JOB_URL}/job/${id}/apply`,
+        {
+          resume: user?.resume,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success(data.message);
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+    } finally {
+      setApplyBtn(null);
     }
   };
   useEffect(() => {
@@ -105,6 +131,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAuth,
         fetchUser,
         setIsAuth,
+        applyBtn,
+        applyJob,
       }}
     >
       {children}

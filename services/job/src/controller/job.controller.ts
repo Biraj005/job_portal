@@ -171,6 +171,12 @@ export class JobController {
   );
   static getJobs = asyncHandler(
     async (req: JobAuthenticatedRequest, res: Response) => {
+      if(!req.user || !req.user.role){
+        return res.status(403).json({
+          success:false,
+          message:"Unauthorized"
+        })
+      }
       const { active, location } = req.query;
 
       const is_active = active !== undefined ? active === "true" : undefined;
@@ -213,8 +219,6 @@ export class JobController {
       const user = req.user;
       const job_id = Number(req.params.id);
       const { resume } = req.body;
-      console.log(job_id, resume, user);
-
       if (!user || user.role !== "CANDIDATE") {
         return res.status(401).json({
           success: false,

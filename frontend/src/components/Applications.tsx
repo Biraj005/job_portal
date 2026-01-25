@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Badge } from "@/components/ui/badge";
@@ -55,7 +55,6 @@ const CandidateApplications = () => {
     fetchApplications();
   }, []);
 
-  // Helper for Status Badge Color
   const getStatusBadge = (status: string) => {
     switch (status.toUpperCase()) {
       case "ACCEPTED":
