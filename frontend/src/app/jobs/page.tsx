@@ -48,9 +48,6 @@ function Page() {
           <span className="text-4xl font-extrabold text-blue-900">Jobs</span>
         </span>
 
-        {/* <p className="mt-2 text-gray-600">
-          Discover your next opportunity from top companies.
-        </p> */}
         {
         !isLoading && jobs.length>0 && (
             <p>{jobs.length} jobs</p>

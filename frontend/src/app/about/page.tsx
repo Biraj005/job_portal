@@ -4,10 +4,8 @@ import { ArrowRight } from "lucide-react";
 const About = () => {
   return (
     <div className="min-h-screen">
-      {/* Mission Section */}
       <section className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-4xl mx-auto">
-          {/* Image */}
           <div className="flex justify-center mb-8">
             <img
               src="/about.jpg"
@@ -15,7 +13,6 @@ const About = () => {
               alt="About HireHeaven"
             />
           </div>
-          {/* Content */}
           <div className="text-center space-y-6">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold">
               Our Mission At Hire
@@ -30,7 +27,6 @@ const About = () => {
           </div>
         </div>
       </section>
-      {/* CTA Section */}
       <section className="py-16 md:py-20 bg-secondary">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center space-y-6">

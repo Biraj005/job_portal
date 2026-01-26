@@ -15,9 +15,6 @@ import {
   Globe,
   CheckCircle2,
   Send,
-  Users,
-  FileEdit,
-  Trash2,
 } from "lucide-react";
 import { AppData } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -44,7 +41,7 @@ function SingleJobPage() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       setJob(data.job || data);
     } catch (error) {
@@ -148,7 +145,6 @@ function SingleJobPage() {
                 </a>
               )}
             </section>
-
           </div>
 
           <div className="lg:col-span-1">
@@ -198,11 +194,11 @@ function SingleJobPage() {
                   </Button>
                 </div>
               )}
-              
             </div>
-            
           </div>
-          <JobApplications jobId={params.id as string}/>
+          {user?.role === "RECRUITER" && job.recuiter_id == user.id && (
+            <JobApplications jobId={params.id as string} />
+          )}
         </div>
       </div>
     </main>

@@ -223,7 +223,6 @@ export class JobService {
     const company = await prisma.companies.findFirst({
       where: {
         company_id,
-
       },
       include: {
         jobs: {
@@ -400,14 +399,63 @@ export class JobService {
       },
     });
 
-    const message:any = {
-      to:updatedApplication.applicant_email,
-      subject:"Application update - Job portal",
-      html:jobStatuseUpdateTemplete(job.title,status)
-
-    }
-    publishEvent(ROUTING_KEYS.SEND_EMAIL,message);
+    const message: any = {
+      to: updatedApplication.applicant_email,
+      subject: "Application update - Job portal",
+      html: jobStatuseUpdateTemplete(job.title, status),
+    };
+    publishEvent(ROUTING_KEYS.SEND_EMAIL, message);
 
     return updatedApplication;
+  }
+  async getAllUserapplications(id: number) {
+    return await prisma.applications.findMany({
+      where: {
+        applicant_id: id,
+      },
+      include: {
+        job: {
+          include: {
+            companis: {
+              select: {
+                company_id: true,
+                name: true,
+                logo: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        applied_at: "desc",
+      },
+    });
+  }
+
+  async deleteJob(job_id: number, recruiter_id: number) {
+    const job = await prisma.jobs.findFirst({
+      where: {
+        job_id,
+      },
+    });
+
+    if (!job) {
+      throw new ApiError("Job not found", 404);
+    }
+
+    if (job.recuiter_id !== recruiter_id) {
+      throw new ApiError("Forbidden", 403);
+    }
+
+    await prisma.jobs.delete({
+      where: {
+        job_id,
+      },
+    });
+
+    return {
+      success: true,
+      message: "Job deleted successfully",
+    };
   }
 }

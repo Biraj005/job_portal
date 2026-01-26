@@ -166,7 +166,7 @@ function Navbar() {
             </Button>
           </Link>
 
-          <Link href={"/job"} onClick={toggleMenu}>
+          <Link href={"/jobs"} onClick={toggleMenu}>
             <Button
               variant={"ghost"}
               className="w-full justify-start gap-3 h-11"

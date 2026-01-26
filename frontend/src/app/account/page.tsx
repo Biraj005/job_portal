@@ -17,7 +17,7 @@ import {
   ArrowBigUpDash,
   UploadCloud,
   CheckCircle2,
-  Camera, // Added Camera icon
+  Camera,
 } from "lucide-react";
 
 import {
@@ -45,18 +45,18 @@ interface IUpdateForm {
 
 const AccountPage = () => {
   const resumeInputRef = useRef<HTMLInputElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null); // Added Ref for image
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const { user, isLoading, setUser } = AppData();
 
   const [btnLoading, setBtnLoading] = useState(false);
   const [resumeLoading, setResumeLoading] = useState(false);
-  const [imageLoading, setImageLoading] = useState(false); // Added loading state for image
+  const [imageLoading, setImageLoading] = useState(false);
   const [addSkillLoading, setAddskillLoading] = useState(false);
 
   const [formUser, setFormUser] = useState<IUpdateForm>({});
   const [skillInput, setSkillInput] = useState("");
   const [selectedResume, setSelectedResume] = useState<File | null>(null);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null); // Added state for selected image
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -88,7 +88,6 @@ const AccountPage = () => {
     setSelectedResume(file);
   };
 
-  // Added: Handle Image Selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -104,19 +103,18 @@ const AccountPage = () => {
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setBtnLoading(true);
-    console.log("Updating Profile:", formUser);
 
     try {
       const token = Cookies.get("token");
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_USER_URL}/user/profile`, // Your API endpoint URL
-        formUser, // The data to send (user object/form data)
+        `${process.env.NEXT_PUBLIC_USER_URL}/user/profile`,
+        formUser,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Add your token here!
-            "Content-Type": "application/json", // Often needed for PUT requests
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-        },
+        }
       );
 
       if (response.data.success) {
@@ -146,9 +144,8 @@ const AccountPage = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multpart/form-data",
           },
-        },
+        }
       );
-      console.log(data);
       if (data.success) {
         toast.success(data.message || "Profile updated successfully");
       }
@@ -163,7 +160,6 @@ const AccountPage = () => {
     }
   };
 
-  // Added: Handle Image Upload
   const handleImageUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedImage) return;
@@ -181,7 +177,7 @@ const AccountPage = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multpart/form-data",
           },
-        },
+        }
       );
 
       if (data.success) {
@@ -217,7 +213,7 @@ const AccountPage = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
       if (data.success) {
         toast.success(data.message || "Skill added successfully");
@@ -241,7 +237,6 @@ const AccountPage = () => {
 
   const handleRemoveSkill = async (skill: string) => {
     const token = Cookies.get("token");
-    console.log(skill);
     try {
       const { data } = await axios.delete(
         `${process.env.NEXT_PUBLIC_USER_URL}/user/skill`,
@@ -252,7 +247,7 @@ const AccountPage = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
       if (data.success) {
         toast.success(data.message || "Skill deleted successfully");
@@ -279,18 +274,24 @@ const AccountPage = () => {
     <SpinnerButton />
   ) : (
     <>
-      <div className="bg-linear-to-r from-blue-400 to-blue-100 min-h-screen w-full flex items-center justify-center p-4">
-        <Card className="md:w-[50%] w-full">
+      <div className="relative overflow-hidden bg-blue-50/50 min-h-screen w-full flex flex-col items-center justify-center p-4">
+        {/* Background Blobs for the Light Blue Theme */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
+        </div>
+
+        {/* Profile Card */}
+        <Card className="md:w-[50%] w-full relative z-10 shadow-xl border-blue-200 bg-white/70 backdrop-blur-md">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <User size={20} />
+            <CardTitle className="flex items-center gap-2 text-black">
+              <User size={20} className="text-black" />
               My Account
             </CardTitle>
 
-            {/* Edit Profile Dialog */}
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant={"default"}>
+                <Button variant={"default"} className="bg-black text-white hover:bg-gray-800">
                   <Edit className="mr-2 h-4 w-4" />
                   Edit profile
                 </Button>
@@ -299,39 +300,42 @@ const AccountPage = () => {
               <DialogContent>
                 <DialogHeader>
                   <DialogDescription>
-                    <p className="mb-4">
+                    <p className="mb-4 text-black">
                       Make changes to your profile here. Click update when
                       you're done.
                     </p>
-                    <form onSubmit={handleProfileUpdate} className="text-base">
+                    <form onSubmit={handleProfileUpdate} className="text-base text-black">
                       <div className="flex items-center mb-2">
-                        <User className="mr-2 h-4 w-4" />
+                        <User className="mr-2 h-4 w-4 text-black" />
                         <Input
                           placeholder="Enter name"
                           name="name"
                           value={formUser.name || ""}
                           onChange={handleUpdateChange}
+                          className="text-black border-gray-400"
                         />
                       </div>
                       <div className="flex items-center mb-2">
-                        <Mail className="mr-2 h-4 w-4" />
+                        <Mail className="mr-2 h-4 w-4 text-black" />
                         <Input
                           placeholder="Enter email"
                           name="email"
                           value={formUser.email || ""}
                           onChange={handleUpdateChange}
+                          className="text-black border-gray-400"
                         />
                       </div>
                       <div className="flex items-center mb-2">
-                        <Contact className="mr-2 h-4 w-4" />
+                        <Contact className="mr-2 h-4 w-4 text-black" />
                         <Input
                           placeholder="Enter phone"
                           name="phoneNumber"
                           value={formUser.phoneNumber || ""}
                           onChange={handleUpdateChange}
+                          className="text-black border-gray-400"
                         />
                       </div>
-                      <Button className="mt-2 w-full" disabled={btnLoading}>
+                      <Button className="mt-2 w-full bg-black text-white hover:bg-gray-800" disabled={btnLoading}>
                         <ArrowBigUpDash className="mr-2 h-4 w-4" />
                         {btnLoading ? "Updating..." : "Update"}
                       </Button>
@@ -343,12 +347,10 @@ const AccountPage = () => {
           </CardHeader>
 
           <CardContent className="space-y-8">
-            {/* Profile Header */}
             <div className="flex flex-col md:flex-row items-center gap-6">
-              {/* Profile Image Update Section (Same to Same as Resume) */}
               <Dialog>
                 <DialogTrigger asChild>
-                  <div className="relative h-32 w-32 rounded-full overflow-hidden border cursor-pointer group hover:opacity-90 transition-opacity">
+                  <div className="relative h-32 w-32 rounded-full overflow-hidden border border-gray-300 cursor-pointer group hover:opacity-90 transition-opacity">
                     <img
                       src={user?.profilePicture || "/vercel.svg"}
                       alt="Profile Picture"
@@ -362,36 +364,36 @@ const AccountPage = () => {
                 <DialogContent>
                   <DialogHeader>
                     <DialogDescription>
-                      <p className="mb-4">
+                      <p className="mb-4 text-black">
                         Upload your new profile picture (Image only).
                       </p>
                       <form onSubmit={handleImageUploadSubmit}>
                         <div className="space-y-4">
                           <div
                             onClick={() => imageInputRef.current?.click()}
-                            className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition-colors bg-slate-50"
+                            className="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center cursor-pointer hover:border-black transition-colors bg-slate-50"
                           >
                             <div className="flex flex-col items-center gap-3">
                               <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
                                 <UploadCloud
                                   size={22}
-                                  className="text-blue-600"
+                                  className="text-black"
                                 />
                               </div>
 
                               <div>
-                                <p className="font-medium text-sm">
+                                <p className="font-medium text-sm text-black">
                                   {selectedImage
                                     ? selectedImage.name
                                     : "Click to upload image"}
                                 </p>
-                                <p className="text-xs opacity-60">
+                                <p className="text-xs text-black">
                                   JPEG, PNG • Max size 2MB
                                 </p>
                               </div>
 
                               {selectedImage && (
-                                <div className="flex items-center gap-2 text-green-600 text-xs">
+                                <div className="flex items-center gap-2 text-green-700 text-xs font-bold">
                                   <CheckCircle2 size={14} />
                                   Selected ready to upload
                                 </div>
@@ -408,7 +410,7 @@ const AccountPage = () => {
                           />
 
                           <Button
-                            className="w-full"
+                            className="w-full bg-black text-white hover:bg-gray-800"
                             disabled={imageLoading || !selectedImage}
                           >
                             <Upload className="mr-2 h-4 w-4" />
@@ -422,38 +424,39 @@ const AccountPage = () => {
               </Dialog>
 
               <div className="text-center md:text-left">
-                <h2 className="text-2xl font-semibold">{user?.name}</h2>
+                <h2 className="text-2xl font-semibold text-black">{user?.name}</h2>
 
-                <div className="flex flex-col gap-2 mt-2 text-sm opacity-80">
+                <div className="flex flex-col gap-2 mt-2 text-sm text-black">
                   <span className="flex items-center gap-2 justify-center md:justify-start">
-                    <Mail size={14} /> {user?.email}
+                    <Mail size={14} className="text-black" /> {user?.email}
                   </span>
                   <span className="flex items-center gap-2 justify-center md:justify-start">
-                    <Phone size={14} /> {user?.phoneNumber}
+                    <Phone size={14} className="text-black" /> {user?.phoneNumber}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Resume Section */}
-            <div className="border rounded-lg p-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
-              <div className="flex items-center gap-3 min-w-0">
-                <FileText className="text-red-500 shrink-0" />
-                <div className="min-w-0">
-                  <Link href={user?.resume || "#"}>
-                    <p className="text-sm opacity-70 truncate hover:underline">
-                      {user?.resume ?? "No resume uploaded"}
-                    </p>
-                  </Link>
+            <div className="border border-blue-200 bg-white/60 rounded-lg p-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
+              {user?.role === "CANDIDATE" && (
+                <div className="flex items-center gap-3 min-w-0">
+                  <FileText className="text-black shrink-0" />
+
+                  <div className="min-w-0">
+                    <Link href={user?.resume || "#"}>
+                      <p className="text-sm text-black truncate hover:underline font-medium">
+                        {user?.resume ?? "No resume uploaded"}
+                      </p>
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {user?.role !== "RECRUITER" && (
                 <div className="w-full md:w-auto">
-                  {/* Upload Resume Dialog */}
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant={"outline"}>
+                      <Button variant={"outline"} className="border-black text-black hover:bg-gray-100">
                         <Upload className="mr-2 h-4 w-4" />
                         Update Resume
                       </Button>
@@ -462,36 +465,36 @@ const AccountPage = () => {
                     <DialogContent>
                       <DialogHeader>
                         <DialogDescription>
-                          <p className="mb-4">
+                          <p className="mb-4 text-black">
                             Upload your latest resume (PDF only).
                           </p>
                           <form onSubmit={handleResumeUploadSubmit}>
                             <div className="space-y-4">
                               <div
                                 onClick={() => resumeInputRef.current?.click()}
-                                className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition-colors bg-slate-50"
+                                className="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center cursor-pointer hover:border-black transition-colors bg-slate-50"
                               >
                                 <div className="flex flex-col items-center gap-3">
                                   <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
                                     <UploadCloud
                                       size={22}
-                                      className="text-blue-600"
+                                      className="text-black"
                                     />
                                   </div>
 
                                   <div>
-                                    <p className="font-medium text-sm">
+                                    <p className="font-medium text-sm text-black">
                                       {selectedResume
                                         ? selectedResume.name
                                         : "Click to upload your resume"}
                                     </p>
-                                    <p className="text-xs opacity-60">
+                                    <p className="text-xs text-black">
                                       PDF only • Max size 2MB
                                     </p>
                                   </div>
 
                                   {selectedResume && (
-                                    <div className="flex items-center gap-2 text-green-600 text-xs">
+                                    <div className="flex items-center gap-2 text-green-700 text-xs font-bold">
                                       <CheckCircle2 size={14} />
                                       Selected ready to upload
                                     </div>
@@ -508,7 +511,7 @@ const AccountPage = () => {
                               />
 
                               <Button
-                                className="w-full"
+                                className="w-full bg-black text-white hover:bg-gray-800"
                                 disabled={resumeLoading || !selectedResume}
                               >
                                 <Upload className="mr-2 h-4 w-4" />
@@ -524,18 +527,20 @@ const AccountPage = () => {
               )}
             </div>
 
-            {/* Skills Section */}
             <div>
-              <h3 className="font-semibold mb-2">Skills</h3>
+              <h3 className="font-semibold mb-2 text-black">Skills</h3>
               <div className="flex flex-wrap gap-2">
                 {user?.skills?.map((Skill) => (
                   <div key={Skill.id} className="flex items-center">
-                    <Badge variant="secondary" className="mr-1">
+                    <Badge
+                      variant="secondary"
+                      className="mr-1 border border-black text-black bg-white hover:bg-gray-100"
+                    >
                       {Skill.name}
                     </Badge>
                     <X
                       size={14}
-                      className="text-red-900 cursor-pointer hover:scale-110"
+                      className="text-black cursor-pointer hover:scale-110"
                       onClick={() => handleRemoveSkill(Skill.id)}
                     />
                   </div>
@@ -545,29 +550,30 @@ const AccountPage = () => {
 
             <div className="w-full m-auto h-10 flex gap-2 mt-4">
               <Input
-                className="border border-b-2 font-semibold w-[80%]"
+                className="border border-b-2 font-semibold w-[80%] bg-white/50 text-black border-gray-400 placeholder:text-gray-600"
                 placeholder="Skill e.g React"
                 value={skillInput}
                 onChange={(e) => setSkillInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddSkill()}
               />
-              <Button className="mx-2" onClick={handleAddSkill}>
+              <Button className="mx-2 bg-black text-white hover:bg-gray-800" onClick={handleAddSkill}>
                 <ArrowRight className="mr-2 h-4 w-4" />
                 {addSkillLoading ? "Adding...." : "Add skill"}
               </Button>
             </div>
-            <hr className="h-1" />
-             {
-              user?.role==="RECRUITER"?
-               
-                <RecruiterCompanies/>
-                :<CandidateApplications/>
-          
-        }
           </CardContent>
-          
         </Card>
-       
+
+        {/* List Card */}
+        <Card className="md:w-[50%] w-full relative z-10 shadow-xl border-blue-200 bg-white/70 backdrop-blur-md mt-6">
+          <CardContent className="pt-6">
+            {user?.role === "RECRUITER" ? (
+              <RecruiterCompanies />
+            ) : (
+              <CandidateApplications />
+            )}
+          </CardContent>
+        </Card>
       </div>
     </>
   );
