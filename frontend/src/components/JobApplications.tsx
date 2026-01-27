@@ -102,8 +102,6 @@ export function JobApplications({ jobId }: JobApplicationsProps) {
     setIsUpdating(true);
     const token = Cookies.get("token");
     const url = `${process.env.NEXT_PUBLIC_JOB_URL}/job/${params.id}/application/${id}`;
-        console.log(url);
-
 
     try {
       await axios.patch(

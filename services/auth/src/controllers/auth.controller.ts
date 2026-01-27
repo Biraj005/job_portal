@@ -7,7 +7,7 @@ const authService = new AuthService();
 
 export class AuthController {
   static registerUser = asyncHandler(async (req: Request, res: Response) => {
-    console.log(req.body);
+
     const user = await authService.registerUser(req);
 
     const token = jwt.sign(

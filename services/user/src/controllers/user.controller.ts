@@ -17,7 +17,7 @@ export class UserController {
   );
   static getProfile = asyncHandler(
     async (req: Request, res: Response, nex: NextFunction) => {
-      console.log(req.params.id)
+
       const getUser = await userService.getUserProfile(Number(req.params.id as string));
       if (!getUser) {
         throw new ApiError("User Not found", 404);
@@ -36,7 +36,6 @@ export class UserController {
       if (!req.user) {
         throw new ApiError("Authentication required", 401);
       }
-      console.log(req.body);
       const updateUser = await userService.updatUser(req.user, req.body);
 
       if (!updateUser) {

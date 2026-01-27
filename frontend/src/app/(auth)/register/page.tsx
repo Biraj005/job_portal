@@ -92,7 +92,7 @@ export default function RegisterPage() {
 
   const submit = async (e: React.FormEvent) => {
     const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL;
-    console.log(AUTH_URL);
+  
 
     e.preventDefault();
     setErrors({});
@@ -136,14 +136,13 @@ export default function RegisterPage() {
       if (validated.data.resume) {
         payload.append("file", validated.data.resume);
       }
-      console.log(payload);
 
       const { data } = await axios.post(`${AUTH_URL}/auth/register`, payload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(data);
+
 
       if(data.success){
         toast.success(data.message);

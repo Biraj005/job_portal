@@ -6,8 +6,10 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { JobCard } from "@/components/JobCard";
 import { AppData } from "@/context/AppContext";
+import { useRouter } from "next/navigation";
 
 function Page() {
+  const router = useRouter();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const {user} = AppData();
@@ -37,6 +39,10 @@ function Page() {
   useEffect(() => {
     fetchJobs();
   }, []);
+  
+  if(!user){
+    router.push('/');
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

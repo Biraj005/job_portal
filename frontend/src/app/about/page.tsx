@@ -15,8 +15,8 @@ const About = () => {
           </div>
           <div className="text-center space-y-6">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-              Our Mission At Hire
-              <span className="text-red-500">Heaven</span>
+              Our Mission At Career
+              <span className="text-blue-900"> Grind</span>
             </h1>
             <p className="text-lg md:text-xl leading-relaxed opacity-90 max-w-3xl mx-auto">
               At HireHaven, we're dedicated to revolutionizing the job search

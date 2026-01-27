@@ -104,7 +104,7 @@ export class JobService {
       work_location,
       company_id,
     } = data;
-    console.log(data);
+
 
     if (
       !title ||
@@ -130,7 +130,7 @@ export class JobService {
     if (!findCompany) {
       throw new ApiError("Company not found", 404);
     }
-    console.log(data);
+
 
     const newJob = await prisma.jobs.create({
       data: {
@@ -162,7 +162,7 @@ export class JobService {
       company_id,
       is_active,
     } = data;
-    console.log(data);
+
 
     if (
       !title ||
@@ -302,7 +302,7 @@ export class JobService {
     resume: string,
     subcribed: boolean,
   ) {
-    console.log(job_id, applicant_id, subcribed, resume);
+
 
     const job = await prisma.jobs.findFirst({
       where: {

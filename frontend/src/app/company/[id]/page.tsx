@@ -142,7 +142,6 @@ const CompanyDetails = () => {
     e.stopPropagation();
     setEditingJobId(job.job_id);
 
-    console.log(job);
     setJobFormData({
       title: job.title,
       description: job.description || "",
@@ -194,7 +193,7 @@ const CompanyDetails = () => {
       };
 
       if (editingJobId) {
-        console.log("hiii", editingJobId);
+     
 
         response = await axios.put(
           `${process.env.NEXT_PUBLIC_JOB_URL}/job/${editingJobId}`,
@@ -202,7 +201,7 @@ const CompanyDetails = () => {
           { headers },
         );
       } else {
-        console.log(payload, editingJobId);
+   
 
         response = await axios.post(
           `${process.env.NEXT_PUBLIC_JOB_URL}/job/new`,
@@ -263,6 +262,9 @@ const CompanyDetails = () => {
         <SpinnerButton />
       </div>
     );
+  }
+  if(!user){
+    router.push('/');
   }
 
   if (!company) return null;

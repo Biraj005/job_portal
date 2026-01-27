@@ -102,15 +102,15 @@ router.post("/resume-analyser", async (req, res) => {
     });
     let jsonResponse;
     try {
-      console.log(response.text)
+
       const rawText: string = response.text??"";
-      console.log(rawText,"rawt text")
+
 
       const cleanedText = rawText
         .replace(/```(?:json)?/gi, "")
         .replace(/```/g, "")
         .trim();
-      console.log(cleanedText)
+
       if (!cleanedText) {
         throw new Error("Ai did not return response");
       }

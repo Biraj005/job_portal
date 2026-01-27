@@ -25,7 +25,7 @@ const CandidateApplications = () => {
       setLoading(true);
       try {
         const token = Cookies.get("token");
-        console.log(token);
+
         const { data } = await axios.get(
           `${process.env.NEXT_PUBLIC_JOB_URL}/job/user-application`,
           { headers: { Authorization: `Bearer ${token}` } },
@@ -33,7 +33,6 @@ const CandidateApplications = () => {
         if (data.success) {
           setApplications(data.applications);
         }
-        console.log(data);
       } catch (error) {
         console.error("Error fetching applications:", error);
       } finally {

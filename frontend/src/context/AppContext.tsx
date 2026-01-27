@@ -64,7 +64,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchUser = async () => {
     setIsLoading(true);
     try {
-      console.log(USER_SERVICE);
       const token = Cookies.get("token");
       if (!token) return;
       const { data } = await axios.get(`${USER_SERVICE}/user/me`, {
@@ -73,7 +72,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         },
       });
       setUser(data.user);
-      console.log(data.user);
       setIsAuth(true);
     } catch (error) {
       if (axios.isAxiosError(error)) {

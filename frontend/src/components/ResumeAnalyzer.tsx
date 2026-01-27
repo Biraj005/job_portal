@@ -66,7 +66,6 @@ const ResumeAnalyzer = () => {
     setLoading(true);
     try {
       const base64 = await convertToBase64(file);
-      console.log(uitls_servie)
       const { data } = await axios.post(
         `${utils_service}/api/utils/resume-analyser`,
         {

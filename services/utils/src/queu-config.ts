@@ -33,9 +33,6 @@ export async function startNotificationService() {
       ROUTING_KEY
     );
 
-    console.log("📨 Notification Service is listening for SEND_EMAIL events");
-
-    // 5️⃣ Consume messages
     channel.consume(QUEUE_NAME, async (msg) => {
       if (!msg) return;
 

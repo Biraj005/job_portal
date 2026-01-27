@@ -31,5 +31,4 @@ export async function startUtilConsumer() {
     channel.ack(msg);
   });
 
-  console.log(" Util service listening for USER_CREATED");
 }

@@ -46,7 +46,7 @@ export class AuthService {
       ...result.data,
       password: hashedPassword,
     };
-    console.log(newUser)
+
 
     let createdUser;
     let resume_link = null;
@@ -61,7 +61,7 @@ export class AuthService {
         },
       });
 
-      console.log("Created candidate user:", createdUser);
+
     } else if (newUser.role == "CANDIDATE") {
       const file = req.file;
     
@@ -179,7 +179,7 @@ export class AuthService {
     try {
       decoded = jwt.verify(token, process.env.JWT_PASS_RESET as string);
     } catch (error: any) {
-      console.log(error.message, "jooo");
+
       throw new ApiError("Expired token", 400);
     }
 

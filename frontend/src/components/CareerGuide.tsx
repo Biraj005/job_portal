@@ -58,7 +58,6 @@ function CareerGuide() {
       const response = await axios.post(`${uitls_servie}/api/utils/career`, {
         skills:skils,
       });
-      console.log(response)
       const data = response.data;
       setResponse(data);
     } catch (e: any) {

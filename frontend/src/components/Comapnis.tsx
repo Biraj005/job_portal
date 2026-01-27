@@ -100,7 +100,6 @@ const RecruiterCompanies = () => {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "Company not deleted");
       }
-      console.log(error);
     }
   };
 

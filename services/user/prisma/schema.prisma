@@ -22,6 +22,7 @@ model UserProfile {
   profilePicturePublicId    String?
 
   isSubscribed              Boolean  @default(false)
+  subscription_period       DateTime?
 
   skills                    UserSkill[]
 

@@ -145,7 +145,7 @@ export class JobController {
     async (req: JobAuthenticatedRequest, res: Response, next: NextFunction) => {
       const user = req.user;
       const company_id = Number(req.params.id);
-      console.log(company_id);
+
 
       if (
         !user?.role ||

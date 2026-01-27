@@ -52,15 +52,15 @@ export default function LoginPage() {
       const { data } = await axios.post(`${AUTH_URL}/auth/login`, formData, {
         withCredentials: true,
       });
-      console.log(data);
+   
       toast.success(data.message);
-      console.log(data);
+
       setUser(data.user);
       setIsAuth(true);
 
       Cookies.set("token", data.token, {
         expires: 7,
-        secure: true,
+        secure: false,
         sameSite: "lax",
       });
       Router.push("/");

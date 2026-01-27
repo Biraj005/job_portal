@@ -11,6 +11,7 @@ export interface User {
   phoneNumber: string | null;
   role: Role;
   bio: string | null;
+  subscription_period:Date | null,       
   resume?: string | null;
   resumePublicId?: string | null;
   profilePicture: string | null;
@@ -72,6 +73,7 @@ export const isAuth = async (
         phoneNumber: true,
         resumePublicId: true,
         isSubscribed: true,
+        subscription_period:true,
         skills: {
           select: {
             skill: true,
@@ -97,6 +99,7 @@ export const isAuth = async (
       resumePublicId: userFromDb.resumePublicId,
       profilePicture: userFromDb.profilePicture,
       isSubscribed: userFromDb.isSubscribed,
+      subscription_period:userFromDb.subscription_period,
       profilePicturePublicId: userFromDb.profilePicturePublicId,
       skills: userFromDb.skills.map((us) => us.skill),
     };
