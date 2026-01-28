@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  job_service:
+    build: .
+    container_name: job_service
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL:"postgresql://neondb_owner:npg_WuaC7eO5tIBG@ep-quiet-lake-a1j18qr9-pooler.ap-southeast-1.aws.neon.tech/job_db?sslmode=require&channel_binding=require"
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && node dist/index.js"
