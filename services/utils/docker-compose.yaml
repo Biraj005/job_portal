@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  utils:
+    build: .
+    container_name: utils-service
+    env_file:
+      - .env
+    ports:
+      - "4001:4001"
+    restart: unless-stopped

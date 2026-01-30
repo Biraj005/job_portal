@@ -1,32 +1,24 @@
-# ---------- Builder Stage ----------
-FROM node:22-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+RUN apk add --no-cache openssl
 
-COPY tsconfig.json ./ 
+COPY package*.json ./
+RUN npm ci
+
 COPY prisma ./prisma
+COPY prisma.config.ts ./prisma.config.ts
+COPY tsconfig.json ./
+
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
+RUN npx prisma generate
+
 COPY src ./src
-
 RUN npm run build
-
-FROM node:22-alpine
-
-WORKDIR /app
-
-# Install only production dependencies
-COPY package*.json ./
-RUN npm install --omit=dev
-
-# Copy compiled JS
-COPY --from=builder /app/dist ./dist
-
-# Copy Prisma schema & migrations
-COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 4000
 
-# Generate Prisma client and run migrations at container start
-CMD ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && node dist/index.js"]
+CMD ["node", "dist/index.js"]

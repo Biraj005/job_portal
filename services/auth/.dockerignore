@@ -1,7 +1,7 @@
 node_modules
 dist
-Dockerfile
-.dockerignore
 .env
+.env.*
 .git
-.gitignore
+.vscode
+.idea

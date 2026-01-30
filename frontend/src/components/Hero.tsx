@@ -28,7 +28,7 @@ function Hero() {
                 #1 Job platform in India
               </span>
             </div>
-            {/**mian heading */}
+            {/**main heading */}
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight ">
               Find your dream job at{" "}
@@ -54,7 +54,7 @@ function Hero() {
               </div>
               <div className="text-center md:text-left">
                 <p className="text-3xl font-bold text-blue-600">10k+</p>
-                <p className="text-sm opacity-70">Job Seakers</p>
+                <p className="text-sm opacity-70">Job Seekers</p>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
@@ -102,7 +102,7 @@ function Hero() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 {/* <img src="/hero.png" alt="" className="object-cover  object-center w-full h-full
                 transform transition-transform duration-500 group-hover:scale-105" /> */}
-                <Image src={'/hero.png'} height={300} width={600} alt="Hero image" quality={70}/>
+                <Image src={'/hero.png'} height={300} width={600} alt="Hero image" quality={75} loading="eager" priority />
               </div>
             </div>
           </div>

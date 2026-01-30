@@ -1,7 +1,25 @@
+# Node
 node_modules
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+
+# Build output
 dist
-Dockerfile
-.dockerignore
+
+# Env & secrets
 .env
+.env.*
+
+# Git
 .git
 .gitignore
+
+# OS / editor junk
+.DS_Store
+.vscode
+.idea
+
+# Docker files you don’t want inside image
+docker-compose*.yml
+Dockerfile

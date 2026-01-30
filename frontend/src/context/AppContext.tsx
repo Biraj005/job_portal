@@ -75,7 +75,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsAuth(true);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data.message);
+        console.log(error.response)
+         toast.error(error.response?.data.message);
       }
       console.log(error);
     } finally {

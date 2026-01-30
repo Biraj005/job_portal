@@ -1,12 +1,14 @@
+version: "3.9"
+
 services:
-  job:
+  user:
     build:
       context: .
       args:
         DATABASE_URL: ${DATABASE_URL}
-    container_name: job-service
+    container_name: user-service
     env_file:
       - .env
     ports:
-      - "4004:4004"
+      - "4002:4002"
     restart: unless-stopped

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link"; // Correct Next.js Link
+import Link from "next/link"; 
 import {
   Briefcase,
   Home,
@@ -10,7 +10,7 @@ import {
   Route,
   UserIcon,
   X,
-} from "lucide-react"; // Use lucide icons like this
+} from "lucide-react"; 
 import { use, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -29,7 +29,7 @@ function Navbar() {
     setIsOpen((prev) => !prev);
   };
   
-  const logoutHandler =() => {
+  const logoutHandler = () => {
     logout();
     router.push("/login");
   };
@@ -91,7 +91,7 @@ function Navbar() {
                           className="h-9 w-9 ring-2 ring-offset-2 ring-offset-background
                         ring-blue-500 cursor-pointer hover:ring-blue-500/40 transition-all"
                         >
-                          {/** avart image */}
+                          {/** avatar image */}
                           <AvatarImage
                             src={user ? (user.profilePicture as string) : ""}
                             alt={user ? user.name : ""}
@@ -115,15 +115,15 @@ function Navbar() {
                           <UserIcon size={16} />
                           My profile
                         </Button>
-                        <Button
-                          className="w-full justify-start gap-2 mt-1"
-                          variant={"ghost"}
-                          onClick={logoutHandler}
-                        >
-                          <LogOut size={16} />
-                          Logout
-                        </Button>
                       </Link>
+                      <Button
+                        className="w-full justify-start gap-2 mt-1"
+                        variant={"ghost"}
+                        onClick={logoutHandler}
+                      >
+                        <LogOut size={16} />
+                        Logout
+                      </Button>
                     </PopoverContent>
                   </Popover>
                 ) : (
@@ -188,7 +188,7 @@ function Navbar() {
 
           {isAuth ? (
             <>
-               <Link href={'/account'}>
+               <Link href={'/account'} onClick={toggleMenu}>
                <Button
                 variant={"ghost"}
                 className="w-full justify-start gap-3 h-11"
@@ -213,10 +213,6 @@ function Navbar() {
             <Link href={"/login"} onClick={toggleMenu}>
               <Button
                 className="w-full justify-start gap-3 h-11 mt-2"
-                onClick={() => {
-                  logoutHandler();
-                  toggleMenu();
-                }}
               >
                 <UserIcon size={18} />
                 SignIn

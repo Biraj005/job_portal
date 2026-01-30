@@ -1,46 +1,26 @@
-# ---------- Builder Stage ----------
-FROM node:22-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-# Install ALL dependencies (including dev) so we can run build & prisma generate
-RUN npm install
-
-COPY tsconfig.json ./ 
-COPY prisma ./prisma
-COPY src ./src
-
-# Generate the client during the BUILD phase to save startup time
-RUN npx prisma generate
-
-RUN npm run build
-
-# ---------- Final Stage ----------
-FROM node:22-alpine
-
-WORKDIR /app
-
-# CRITICAL FIX FOR NEON DB: Install OpenSSL
 RUN apk add --no-cache openssl
 
-# Install only production dependencies
 COPY package*.json ./
-RUN npm install --omit=dev
+RUN npm ci
 
-# Copy compiled JS
-COPY --from=builder /app/dist ./dist
+COPY prisma ./prisma
+COPY prisma.config.ts ./prisma.config.ts
+COPY tsconfig.json ./
 
-# Copy Prisma schema
-COPY --from=builder /app/prisma ./prisma
+# ---- ADD THESE TWO LINES ----
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+# --------------------------------
 
-# COPY THE GENERATED CLIENT
-# This prevents us from needing to run 'prisma generate' every startup
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+RUN npx prisma generate
+
+COPY src ./src
+RUN npm run build
 
 EXPOSE 4004
 
-# STARTUP COMMAND
-# We keep 'migrate deploy' here, but ensure your DATABASE_URL is set in docker-compose
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
+CMD ["node", "dist/index.js"]
