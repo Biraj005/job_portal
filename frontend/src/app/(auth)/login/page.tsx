@@ -60,8 +60,8 @@ export default function LoginPage() {
 
       Cookies.set("token", data.token, {
         expires: 7,
-        secure: true, // MUST be true on Vercel (HTTPS)
-        sameSite: "none", // MUST be none for cross-origin
+        secure: true, 
+        sameSite: "none",
       });
 
       Router.push("/");
