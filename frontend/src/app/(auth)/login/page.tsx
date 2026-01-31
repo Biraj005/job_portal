@@ -52,7 +52,7 @@ export default function LoginPage() {
       const { data } = await axios.post(`${AUTH_URL}/auth/login`, formData, {
         withCredentials: true,
       });
-   
+
       toast.success(data.message);
 
       setUser(data.user);
@@ -60,14 +60,16 @@ export default function LoginPage() {
 
       Cookies.set("token", data.token, {
         expires: 7,
-        secure: false,
-        sameSite: "lax",
+        secure: true, // MUST be true on Vercel (HTTPS)
+        sameSite: "none", // MUST be none for cross-origin
       });
+
       Router.push("/");
     } catch (error: any) {
-      console.log(error);
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data.message);
+      }else{
+        console.log(error);
       }
     } finally {
       setIsLoading(false);

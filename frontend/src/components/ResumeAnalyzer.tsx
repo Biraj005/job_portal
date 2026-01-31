@@ -37,12 +37,10 @@ const ResumeAnalyzer = () => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       if (selectedFile.type !== "application/pdf") {
-        // toast.error("Please upload a PDF file");
         alert("Please upload a PDF file");
         return;
       }
       if (selectedFile.size > 5 * 1024 * 1024) {
-        // toast.error("File size should be less than 5MB");
         alert("File size should be less than 5MB");
         return;
       }
