@@ -23,9 +23,9 @@ import {
 import axios from "axios";
 import { ResumeAnalysisResponse, Suggestion, uitls_servie } from "@/types/types";
 
-import { uitls_servie as utils_service } from "@/types/types";
 
 const ResumeAnalyzer = () => {
+  const utils_service = process.env.NEXT_PUBLIC_UTIL
 
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);

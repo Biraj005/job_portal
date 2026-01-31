@@ -1,5 +1,5 @@
 "use client";
-import { CareerGuuideResponse, uitls_servie } from "@/types/types";
+import { CareerGuuideResponse} from "@/types/types";
 import axios from "axios";
 import {
   ArrowRight,
@@ -27,6 +27,8 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 
 function CareerGuide() {
+  
+  const utils_service = process.env.NEXT_PUBLIC_UTIL
   const [open, setOpen] = useState(false);
   const [skils, setSkils] = useState<string[]>([]);
   const [currentskill, setCurresntskill] = useState<string>("");
@@ -55,7 +57,7 @@ function CareerGuide() {
     setLoading(true);
     try {
 
-      const response = await axios.post(`${uitls_servie}/api/utils/career`, {
+      const response = await axios.post(`${utils_service}/api/utils/career`, {
         skills:skils,
       });
       const data = response.data;
